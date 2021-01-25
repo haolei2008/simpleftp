@@ -1,0 +1,52 @@
+# This is an example goreleaser.yaml file with some sane defaults.
+# Make sure to check the documentation at http://goreleaser.com
+project_name: ftp
+before:
+  hooks:
+  # you may remove this if you don't use vgo
+env_files:
+  gitea_token: ~/.gitea_token
+gitea_urls:
+  api: http://git.coinv.com/api/v1/
+  skip_tls_verify: false
+builds:
+  - #
+    id: simpleftp
+    env:
+      - CGO_ENABLED=0
+    main: .
+    binary: simpleftp
+    goos:
+      - windows
+      - linux
+    goarch:
+      - amd64
+      - 386
+      - arm
+    goarm:
+      - 5
+      - 7
+
+archives:
+  - #
+    id: install-archive
+    format: zip
+    wrap_in_directory: true
+    replacements:
+      amd64: 64-bit
+      386: 32-bit
+      darwin: macOS
+
+checksum:
+  name_template: 'checksums.txt'
+snapshot:
+  name_template: "{{ .Tag }}-next"
+release:
+  name_template: "{{.ProjectName}}-v{{.Version}}"
+changelog:
+  sort: asc
+  filters:
+    exclude:
+      - '^docs:'
+      - '^test:'
+dist: ./dist
